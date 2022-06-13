@@ -21,14 +21,6 @@ def say_Hello_to_user(message):
 	mesg = bot.send_message(message.chat.id, "Привет, " + str(message.from_user.first_name) + " " + str(message.from_user.last_name) + " \nТы попал в магазин однаразок🤤 \nБудь аккуратней здесь💋", reply_markup = markup_reply)
 	bot.register_next_step_handler(mesg, ChoosingOfBrand)
 
-@bot.message_handler(commands = ["/busket"])
-def UsersBusket(message):
-	if len(Busket) == 0:
-		bot.send_message(message.chat.id, "Корзина пуста😖")
-
-	else:
-		bot.send_message(message.chat.id, Busket)
-
 @bot.message_handler(func = lambda message: message.text == "uashduaHSUFYABSKDIAYSGFIYAYSGYGgysgygyuasduausdgugaf")
 def ChoosingOfBrand(message):
 	if message.text != "Ок":
@@ -69,79 +61,154 @@ def ChoosingOfBrand(message):
 
 @bot.message_handler(func = lambda message: message.text == "jaijuvuahsudinasuuandsuhuasduhfaushfuhasuhduoahsu fubauisbfuasuifb")
 def ChoosingOfTaste(message):
-	global Brand
-	Brand = str(message.text)
+	if str(message.text) not in list:
+		bot.send_message(message.chat.id, "Выберите только из того что есть в списке")
 
-	conn = None
-	cur = None
+		conn = None
+		cur = None
 
-	try:
+		try:
 
-		conn = psycopg2.connect(
-				host = "localhost",
-				dbname = "demo",
-				user = "postgres",
-				password = 256809,
-				port = 5433)
+			conn = psycopg2.connect(
+					host = "localhost",
+					dbname = "demo",
+					user = "postgres",
+					password = 256809,
+					port = 5433)
 
-		cur = conn.cursor()
+			cur = conn.cursor()
 
-		markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
-		cur.execute(f"SELECT Taste FROM vapes WHERE Brand = '{Brand}'")
-		for i in set(cur.fetchall()):
-			item = types.KeyboardButton(i[0])
-			markup_reply.add(item)
-			list.append(i[0])
+			markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
+			cur.execute("SELECT Brand FROM vapes")
+			for i in set(cur.fetchall()):
+				item = types.KeyboardButton(i[0])
+				markup_reply.add(item)
+				list.append(i[0])
 
-		mesg = bot.send_message(message.chat.id, "Какой вкус вы хотите?", reply_markup = markup_reply)
-		bot.register_next_step_handler(mesg, ChoosingOfTimes)
+			mesg = bot.send_message(message.chat.id, "Какой бренд вы предпочитаете?)", reply_markup = markup_reply)
+			bot.register_next_step_handler(mesg, ChoosingOfTaste)
 
-		conn.commit()
+			conn.commit()
 
-	finally:
-		if conn is not None:
-			conn.close()
+		finally:
+			if conn is not None:
+				conn.close()
 
-		if cur is not None:
-			cur.close()
+			if cur is not None:
+				cur.close()	
+	
+	else:
+
+		global Brand
+		Brand = str(message.text)
+
+		conn = None
+		cur = None
+
+		try:
+
+			conn = psycopg2.connect(
+					host = "localhost",
+					dbname = "demo",
+					user = "postgres",
+					password = 256809,
+					port = 5433)
+
+			cur = conn.cursor()
+
+			markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
+			cur.execute(f"SELECT Taste FROM vapes WHERE Brand = '{Brand}'")
+			for i in set(cur.fetchall()):
+				item = types.KeyboardButton(i[0])
+				markup_reply.add(item)
+				list1.append(i[0])
+
+			mesg = bot.send_message(message.chat.id, "Какой вкус вы хотите?", reply_markup = markup_reply)
+			bot.register_next_step_handler(mesg, ChoosingOfTimes)
+
+			conn.commit()
+
+		finally:
+			if conn is not None:
+				conn.close()
+
+			if cur is not None:
+				cur.close()
 
 @bot.message_handler(func = lambda message: message.text == "kopasjfpijqsiafjoiaosnuifnbuoas u jubasf u ajubhj2 3j4b o2u3 oj 4h23ob42")
 def ChoosingOfTimes(message):
-	global Taste
-	Taste = str(message.text)
+	if str(message.text) not in list1:
+		bot.send_message(message.chat.id, "Выберите из того что есть в списке")
+		conn = None
+		cur = None
 
-	conn = None
-	cur = None
+		try:
 
-	try:
+			conn = psycopg2.connect(
+					host = "localhost",
+					dbname = "demo",
+					user = "postgres",
+					password = 256809,
+					port = 5433)
 
-		conn = psycopg2.connect(
-				host = "localhost",
-				dbname = "demo",
-				user = "postgres",
-				password = 256809,
-				port = 5433)
+			cur = conn.cursor()
 
-		cur = conn.cursor()
+			markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
+			cur.execute(f"SELECT Taste FROM vapes WHERE Brand = '{Brand}'")
+			for i in set(cur.fetchall()):
+				item = types.KeyboardButton(i[0])
+				markup_reply.add(item)
+				list1.append(i[0])
 
-		markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
-		cur.execute(f"SELECT Times FROM vapes WHERE Brand = '{Brand}' AND Taste = '{Taste}'")
-		for i in set(cur.fetchall()):
-			item = types.KeyboardButton(i[0])
-			markup_reply.add(item)
-			list.append(i[0])
+			mesg = bot.send_message(message.chat.id, "Какой вкус вы хотите?", reply_markup = markup_reply)
+			bot.register_next_step_handler(mesg, ChoosingOfTimes)
 
-		mesg = bot.send_message(message.chat.id, "На сколько тяжек)", reply_markup = markup_reply)
-		bot.register_next_step_handler(mesg, Result)
+			conn.commit()
 
-		conn.commit()
+		finally:
+			if conn is not None:
+				conn.close()
 
-	finally:
-		if conn is not None:
-			conn.close()
+			if cur is not None:
+				cur.close()
 
-		if cur is not None:
-			cur.close()
+	else:
+
+		global Taste
+		Taste = str(message.text)
+
+		conn = None
+		cur = None
+
+		try:
+
+			conn = psycopg2.connect(
+					host = "localhost",
+					dbname = "demo",
+					user = "postgres",
+					password = 256809,
+					port = 5433)
+
+			cur = conn.cursor()
+
+			markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
+			cur.execute(f"SELECT Times FROM vapes WHERE Brand = '{Brand}' AND Taste = '{Taste}'")
+			for i in set(cur.fetchall()):
+				item = types.KeyboardButton(i[0])
+				markup_reply.add(item)
+				list2.append(i[0])
+
+			mesg = bot.send_message(message.chat.id, "На сколько тяжек)", reply_markup = markup_reply)
+			bot.register_next_step_handler(mesg, Result)
+
+			conn.commit()
+
+		finally:
+			if conn is not None:
+				conn.close()
+
+			if cur is not None:
+				cur.close()
 
 def check(message):
 	try:
@@ -152,44 +219,81 @@ def check(message):
 
 @bot.message_handler(func = lambda message: message.text == "[oiasjdoiSAFHUOSDasi uIABUs adhi UADUBhia dihuBUBHI iha d")
 def Result(message):
-	global Times
-	Times = str(message.text)
+	if int(message.text) not in list2:
+		bot.send_message(message.chat.id, "Выберите из того что есть в списке")
+		conn = None
+		cur = None
 
-	conn = None
-	cur = None
+		try:
 
-	try:
+			conn = psycopg2.connect(
+					host = "localhost",
+					dbname = "demo",
+					user = "postgres",
+					password = 256809,
+					port = 5433)
 
-		conn = psycopg2.connect(
-				host = "localhost",
-				dbname = "demo",
-				user = "postgres",
-				password = 256809,
-				port = 5433)
+			cur = conn.cursor()
 
-		cur = conn.cursor()
+			markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
+			cur.execute(f"SELECT Times FROM vapes WHERE Brand = '{Brand}' AND Taste = '{Taste}'")
+			for i in set(cur.fetchall()):
+				item = types.KeyboardButton(i[0])
+				markup_reply.add(item)
+				list2.append(i[0])
 
-		cur.execute(f"SELECT Price FROM vapes WHERE Brand = '{Brand}' AND Taste = '{Taste}' AND Times = '{Times}'")
-		global Price
-		Price = cur.fetchall()[0][0]
+			mesg = bot.send_message(message.chat.id, "На сколько тяжек)", reply_markup = markup_reply)
+			bot.register_next_step_handler(mesg, Result)
 
-		cur.execute(f"SELECT Price FROM vapes WHERE Brand = '{Brand}' AND Taste = '{Taste}' AND Times = '{Times}' AND Price = '{Price}'")
-		global len_of_result_vapes
-		len_of_result_vapes = len(cur.fetchall())
+			conn.commit()
 
-		ResultOrder = "Итог: \nБренд: " + Brand + "\nВкус: " + Taste + "\nКоличество тяг: " + Times + "\nЦена за одну штуку: " + str(Price) + "\nВ наличии: " + str(len_of_result_vapes)
-		mesg = bot.send_message(message.chat.id, ResultOrder, reply_markup = types.ReplyKeyboardRemove())
-		bot.send_message(message.chat.id, "Сколько будете брать?")
-		bot.register_next_step_handler(mesg, EndOfOrder)
+		finally:
+			if conn is not None:
+				conn.close()
 
-		conn.commit()
+			if cur is not None:
+				cur.close()
+	
+	else:
 
-	finally:
-		if conn is not None:
-			conn.close()
+		global Times
+		Times = str(message.text)
 
-		if cur is not None:
-			cur.close()
+		conn = None
+		cur = None
+
+		try:
+
+			conn = psycopg2.connect(
+					host = "localhost",
+					dbname = "demo",
+					user = "postgres",
+					password = 256809,
+					port = 5433)
+
+			cur = conn.cursor()
+
+			cur.execute(f"SELECT Price FROM vapes WHERE Brand = '{Brand}' AND Taste = '{Taste}' AND Times = '{Times}'")
+			global Price
+			Price = cur.fetchall()[0][0]
+
+			cur.execute(f"SELECT Price FROM vapes WHERE Brand = '{Brand}' AND Taste = '{Taste}' AND Times = '{Times}' AND Price = '{Price}'")
+			global len_of_result_vapes
+			len_of_result_vapes = len(cur.fetchall())
+
+			ResultOrder = "Итог: \nБренд: " + Brand + "\nВкус: " + Taste + "\nКоличество тяг: " + Times + "\nЦена за одну штуку: " + str(Price) + "\nВ наличии: " + str(len_of_result_vapes)
+			mesg = bot.send_message(message.chat.id, ResultOrder, reply_markup = types.ReplyKeyboardRemove())
+			bot.send_message(message.chat.id, "Сколько будете брать?")
+			bot.register_next_step_handler(mesg, EndOfOrder)
+
+			conn.commit()
+
+		finally:
+			if conn is not None:
+				conn.close()
+
+			if cur is not None:
+				cur.close()
 
 @bot.message_handler(func = lambda message: message.text == "ipanjipaSidioandoiasidn")
 @bot.message_handler(func = check)
