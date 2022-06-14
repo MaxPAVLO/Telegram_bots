@@ -316,6 +316,9 @@ def EndOfOrder(message):
 		bot.register_next_step_handler(mesg, EndOfOrder)
 
 	else:
+		global Choosen
+		Choosen = int(message.text)
+
 		markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
 		item = types.KeyboardButton("Добавить в корзину🚩")
 		item1 = types.KeyboardButton("Вернуться в самое начало💫")
@@ -372,14 +375,39 @@ def Ask(message):
 				cur.close()
 
 	else:
-		markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
-		item = types.KeyboardButton("Завершить заказ🙄")
-		item1 = types.KeyboardButton("Купить ещё что нибудь🥴")
-		markup_reply.add(item, item1)
-		Busket = Busket + ResultOrder + "\n"
-		bot.send_message(message.chat.id, "Успешно добавлено в корзину🤑")
-		mesg = bot.send_message(message.chat.id, "Выберите что-нибудь📌", reply_markup = markup_reply)
-		bot.register_next_step_handler(mesg, Ask2)
+		conn = None
+		cur = None
+
+		try:
+
+			conn = psycopg2.connect(
+				host = "localhost",
+				dbname = "demo",
+				user = "postgres",
+				password = 256809,
+				port = 5433)
+
+			cur = conn.cursor()
+
+			markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
+			item = types.KeyboardButton("Завершить заказ🙄")
+			item1 = types.KeyboardButton("Купить ещё что нибудь🥴")
+			markup_reply.add(item, item1)
+			Busket = Busket + ResultOrder + "\n"
+			bot.send_message(message.chat.id, "Успешно добавлено в корзину🤑")
+			mesg = bot.send_message(message.chat.id, "Выберите что-нибудь📌", reply_markup = markup_reply)
+			bot.register_next_step_handler(mesg, Ask2)
+
+			cur.execute(f"DELETE * FROM vapes WHERE Brand = '{Brand} AND Taste = '{Taste}' AND Times = '{Times}' AND Price = '{Price}' LIMIT {len_of_result_vapes}")
+
+			conn.commit()
+
+		finally:
+			if cur is not None:
+				cur.close()
+
+			if conn is not None:
+				conn.close()
 
 @bot.message_handler(func = lambda message: message.text == "ksi-fjaisjdauhsudhuasdh asda shd  sdaj sdh ajs dj ashd h j12 3j1 2jh3 ")
 def Ask2(message):
@@ -429,5 +457,8 @@ def Sending(message):
 	bot.send_message(1236422161, "На этот номер телефона: " + str(message.text))
 	bot.send_message(message.chat.id, "Заказ успешно сделан☑️")
 	bot.send_message(message.chat.id, "Ждите пока админ свяжится с вами.")
+	list = []
+	list1 = []
+	list2 = []
 
 bot.polling()

@@ -1,13 +1,28 @@
-num = int(input())
+import psycopg2
 
-def Fibonachi(num):
-	if num == 1:
-		return 0
+conn = None
+cur = None
 
-	elif num == 2:
-		return 1
+try:
+	conn = psycopg2.connect(
+		host = "localhost",
+		dbname = "demo",
+		user = "postgres",
+		password = 256809,
+		port = 5433)
 
-	return Fibonachi(num - 1) + Fibonachi(num - 2)
+	cur = conn.cursor()
 
-for i in range(1, num + 1):
-	print(Fibonachi(i))
+	insert_script = "INSERT INTO vapes VALUES(%s, %s, %s, %s)"
+	insert_value = ("Pipe", "Кокосовый", 1500, 1000)
+
+	cur.execute(insert_script, insert_value)
+
+	conn.commit()
+
+finally:
+	if cur is not None:
+		cur.close()
+
+	if conn is not None:
+		conn.close()
