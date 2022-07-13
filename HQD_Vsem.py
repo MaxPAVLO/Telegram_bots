@@ -317,7 +317,7 @@ def EndOfOrder(message):
 
 	else:
 		global Choosen
-		Choosen = int(message.text)
+		Choosen = str(message.text)
 
 		markup_reply = types.ReplyKeyboardMarkup(resize_keyboard = True)
 		item = types.KeyboardButton("Добавить в корзину🚩")
@@ -394,11 +394,10 @@ def Ask(message):
 			item1 = types.KeyboardButton("Купить ещё что нибудь🥴")
 			markup_reply.add(item, item1)
 			Busket = Busket + ResultOrder + "\n"
+			cur.execute(f"DELETE * FROM vapes WHERE Brand = '{Brand} AND Taste = '{Taste} AND Times = '{Times} AND Price = '{Price}' LIMIT '{Choosen}'")
 			bot.send_message(message.chat.id, "Успешно добавлено в корзину🤑")
 			mesg = bot.send_message(message.chat.id, "Выберите что-нибудь📌", reply_markup = markup_reply)
 			bot.register_next_step_handler(mesg, Ask2)
-
-			cur.execute(f"DELETE * FROM vapes WHERE Brand = '{Brand} AND Taste = '{Taste}' AND Times = '{Times}' AND Price = '{Price}' LIMIT {len_of_result_vapes}")
 
 			conn.commit()
 
@@ -452,6 +451,9 @@ def Ask2(message):
 
 @bot.message_handler(func = lambda message: message.text == "kaodsjoinoansjf askf  j j 12j 3j 12 3uio1nb2h h1 23")
 def Sending(message):
+	global Busket
+	Busket = Busket
+	
 	bot.send_message(1236422161, "Новый ЗАКАЗ)))")
 	bot.send_message(1236422161, Busket)
 	bot.send_message(1236422161, "На этот номер телефона: " + str(message.text))
@@ -460,5 +462,6 @@ def Sending(message):
 	list = []
 	list1 = []
 	list2 = []
+	Busket = ""
 
 bot.polling()
